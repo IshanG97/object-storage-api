@@ -1,37 +1,42 @@
 # minio_api.py
+import io
+
+from fastapi import UploadFile
 from minio import Minio
 from minio.error import S3Error
-from fastapi import UploadFile
-import io
+
 from storage_base import StorageAPI
+
 
 class MinioAPI(StorageAPI):
     def __init__(self):
-        super().__init__() # Initialize StorageAPI first to get the config values
+        super().__init__()  # Initialize StorageAPI first to get the config values
         self.client = Minio(
             endpoint=self.endpoint,
             access_key=self.access_key,
             secret_key=self.secret_key,
-            secure=self.secure
+            secure=self.secure,
         )
 
     async def list_files(self, bucket_name: str):
         try:
             if not self.client.bucket_exists(bucket_name):
                 return {"error": f"Bucket '{bucket_name}' does not exist"}
-            
+
             objects = self.client.list_objects(bucket_name)
-            
-            files = [{
-                "name": obj.object_name,
-                "size": obj.size,
-                "last_modified": obj.last_modified.isoformat() if obj.last_modified else None
-            } for obj in objects]
-            
-            return {
-                "bucket": bucket_name,
-                "files": files
-            }
+
+            files = [
+                {
+                    "name": obj.object_name,
+                    "size": obj.size,
+                    "last_modified": obj.last_modified.isoformat()
+                    if obj.last_modified
+                    else None,
+                }
+                for obj in objects
+            ]
+
+            return {"bucket": bucket_name, "files": files}
         except S3Error as e:
             return {"error": f"Error listing files: {str(e)}"}
 
@@ -43,7 +48,7 @@ class MinioAPI(StorageAPI):
                 file.filename,
                 io.BytesIO(content),
                 length=len(content),
-                content_type=file.content_type
+                content_type=file.content_type,
             )
             return {"message": "File uploaded successfully"}
         except S3Error as e:
@@ -55,7 +60,7 @@ class MinioAPI(StorageAPI):
             return data.read()  # Just return raw bytes
         except S3Error as e:
             return {"error": f"Error downloading file: {str(e)}"}
-                
+
     async def delete_file(self, bucket_name: str, filename: str):
         try:
             self.client.remove_object(bucket_name, filename)

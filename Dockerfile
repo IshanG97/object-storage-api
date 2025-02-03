@@ -13,8 +13,12 @@ RUN apt-get update && \
 
 ENV PATH="/root/.local/bin/:$PATH"
 
-COPY .python-version config.py minio_api.py service.py pyproject.toml uv.lock /app/
+# copy environment files
+COPY .python-version pyproject.toml uv.lock /app/
 
 RUN uv sync
 
-ENTRYPOINT ["uv", "run", "uvicorn", "service:app", "--host", "0.0.0.0", "--port", "9090"]
+# copy app files
+COPY config.py minio_api.py service.py storage_base.py storage_factory.py /app/
+
+ENTRYPOINT ["uv", "run", "uvicorn", "service:app", "--host", "0.0.0.0", "--port", "59090"]

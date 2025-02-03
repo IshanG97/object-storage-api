@@ -2,23 +2,28 @@
 
 standalone FastAPI service for object storage
 
-## set up and run the service
 
-for minio:
-start minio docker container: 
+## set up and run the MinIO object storage service
 
+create `.env.minio` file from template, then manually update environment variables
 ```bash
-docker run -p 9000:9000 -p 9001:9001 -e-v <local_data_folder>:/data  quay.io/minio/minio server /data --console-address ":9001"
+cp .env.minio.example .env.minio
 ```
 
-## 1. setup environment variables
+start [MinIO](https://github.com/minio/minio) object storage Docker container:
+```bash
+DATA_DIRECTORY=<local data directory path>
 
-for `.env` files with `.example` at then, remove the `.example` from the filename
-- e.g. `.env.docker.example` ---> `.env.docker`
+docker run -p 9000:9000 -p 9001:9001 -v $DATA_DIRECTORY:/data --env-file .env.minio quay.io/minio/minio server /data --console-address ":9001"
+```
 
-## 2a. preferred method: run in a Docker container
 
-uses variables stored in `.env.docker`
+## 2b. preferred method: run service in a Docker container
+
+create `.env.docker` file from template; update environment variable values if needed
+```bash
+cp .env.docker.example .env.docker
+```
 
 build the Docker image
 ```bash
@@ -30,9 +35,13 @@ run the Docker container service
 docker compose up
 ```
 
+
 ## 2b. alternative method: set up and run the service locally
 
-uses variables stored in `.env` 
+create `.env` file from template; update environment variable values if needed
+```bash
+cp .env.example .env
+```
 
 set up a dedicated virtual environment to run the service
 ```bash
@@ -48,13 +57,12 @@ uv sync
 start the service
 ```bash
 # development
-uv run fastapi dev --host 127.0.0.1 --port 9090 service.py
+uv run fastapi dev --host 127.0.0.1 --port 59090 service.py
 
 # production
-uv run uvicorn service:app --host 127.0.0.1 --port 9090
-# OR
-uv run fastapi run --host 127.0.0.1 --port 9090 service.py
+uv run uvicorn service:app --host 127.0.0.1 --port 59090
 ```
+
 
 ## 3. test the service
 
@@ -66,11 +74,10 @@ IMAGE_PATH="data/{bucket_name}/{image_filename}"
 IMAGE_PATH="local/{image_filename}"
 
 # curl command once IMAGE_PATH has been set
-curl -X GET "http://127.0.0.1:9090/process/${IMAGE_PATH}" -H "accept: application/json"
-
+curl -X GET "http://127.0.0.1:59090/process/${IMAGE_PATH}" -H "accept: application/json"
 ```
 
 service documentation:
-http://127.0.0.1:9090/docs
+http://127.0.0.1:59090/docs
 
 NOTE: The service is designed to run locally and currently doesn't incorporate authentication or other security features.

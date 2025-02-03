@@ -3,3 +3,4 @@
 .env.kube
 .venv/
 __pycache__/
+.env*

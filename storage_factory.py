@@ -1,5 +1,6 @@
 from minio_api import MinioAPI
 
+
 def get_storage_api(storage_service):
     if storage_service == "minio":
         return MinioAPI()
