@@ -1,0 +1,5 @@
+.env
+.env.docker
+.env.kube
+.venv/
+__pycache__/
