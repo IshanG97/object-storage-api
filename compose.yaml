@@ -2,7 +2,7 @@ services:
   object-storage-api:
     image: object-storage-api
     ports:
-      - "9090:9090"  # For accessing container from host
+      - "59090:59090"  # For accessing container from host
     extra_hosts:
       - "host.docker.internal:host-gateway"  # For accessing host from container
     env_file:
