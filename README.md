@@ -54,6 +54,11 @@ uv python install 3.11
 uv sync
 ```
 
+install `pre-commit` git hook scripts
+```bash
+uv run pre-commit install
+```
+
 start the service
 ```bash
 # development
