@@ -16,15 +16,15 @@ app.add_middleware(
 )
 
 # Initialize storage API
-storage_api = get_storage_api(config["OBJECT_STORAGE_SERVICE"])
+storage_api = get_storage_api(config.OBJECT_STORAGE_SERVICE)
 
 
 @app.get("/health")
 async def health_check():
     return {
         "status": "healthy",
-        "storage_service": config["OBJECT_STORAGE_SERVICE"],
-        "endpoint": config["OBJECT_STORAGE_ENDPOINT"],
+        "storage_service": config.OBJECT_STORAGE_SERVICE,
+        "endpoint": config.OBJECT_STORAGE_ENDPOINT,
     }
 
 

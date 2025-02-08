@@ -1,0 +1,5 @@
+services:
+  object-storage-api:
+    image: cr.eu-west1.nebius.cloud/e01gq88339pxykbawe/object-storage-api:latest
+    ports:
+      - "59090:59090"

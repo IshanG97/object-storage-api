@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: object-storage-api
+  name: object-storage-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: object-storage-api
+  template:
+    metadata:
+      labels:
+        io.kompose.service: object-storage-api
+    spec:
+      containers:
+        - name: object-storage-api
+          image: cr.eu-west1.nebius.cloud/e01gq88339pxykbawe/object-storage-api:latest
+          ports:
+            - containerPort: 59090
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: object-storage-creds
+      #restartPolicy: Always

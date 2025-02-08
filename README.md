@@ -62,10 +62,10 @@ uv run pre-commit install
 start the service
 ```bash
 # development
-uv run fastapi dev --host 127.0.0.1 --port 59090 service.py
+fastapi dev --host 127.0.0.1 --port 59090 service.py
 
 # production
-uv run uvicorn service:app --host 127.0.0.1 --port 59090
+uvicorn service:app --host 127.0.0.1 --port 59090
 ```
 
 
