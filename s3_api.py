@@ -5,17 +5,21 @@ from fastapi import UploadFile
 from minio import Minio
 from minio.error import S3Error
 
+from config import config
 from storage_base import StorageAPI
 
 
-class MinioAPI(StorageAPI):
+class S3API(StorageAPI):
     def __init__(self):
         super().__init__()  # Initialize StorageAPI first to get the config values
+        self.region = config.OBJECT_STORAGE_REGION  # We don't need this in StorageAPI since it's not common across object storage services
+
         self.client = Minio(
             endpoint=self.endpoint,
             access_key=self.access_key,
             secret_key=self.secret_key,
-            secure=self.secure,
+            secure=self.secure,  # When True, uses HTTPS (port 443)
+            region=self.region,  # Minio ignores this, but it's required for AWS S3
         )
 
     async def list_files(self, bucket_name: str):
@@ -71,7 +75,7 @@ class MinioAPI(StorageAPI):
     async def create_bucket(self, bucket_name: str):
         try:
             if not self.client.bucket_exists(bucket_name):
-                self.client.make_bucket(bucket_name)
+                self.client.make_bucket(bucket_name, location=self.region)
                 return {"message": f"Bucket '{bucket_name}' created successfully"}
             return {"message": f"Bucket '{bucket_name}' already exists"}
         except S3Error as e:

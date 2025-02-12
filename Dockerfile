@@ -19,6 +19,6 @@ COPY .python-version pyproject.toml uv.lock /app/
 RUN uv sync
 
 # copy app files
-COPY config.py minio_api.py service.py storage_base.py storage_factory.py /app/
+COPY config.py s3_api.py service.py storage_base.py storage_factory.py /app/
 
 ENTRYPOINT ["uv", "run", "uvicorn", "service:app", "--host", "0.0.0.0", "--port", "59090"]

@@ -3,7 +3,7 @@
 standalone FastAPI service for object storage
 
 
-## set up and run the MinIO object storage service
+## 1. set up and run the MinIO object storage service
 
 create `.env.minio` file from template, then manually update environment variables
 ```bash
@@ -18,7 +18,7 @@ docker run -p 9000:9000 -p 9001:9001 -v $DATA_DIRECTORY:/data --env-file .env.mi
 ```
 
 
-## 2b. preferred method: run service in a Docker container
+## 2a. preferred method: run service in a Docker container
 
 create `.env.docker` file from template; update environment variable values if needed
 ```bash
@@ -62,10 +62,10 @@ uv run pre-commit install
 start the service
 ```bash
 # development
-uv run fastapi dev --host 127.0.0.1 --port 59090 service.py
+fastapi dev --host 127.0.0.1 --port 59090 service.py
 
 # production
-uv run uvicorn service:app --host 127.0.0.1 --port 59090
+uvicorn service:app --host 127.0.0.1 --port 59090
 ```
 
 

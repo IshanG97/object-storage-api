@@ -8,10 +8,10 @@ from config import config
 
 class StorageAPI(ABC):
     def __init__(self):
-        self.endpoint = config["OBJECT_STORAGE_ENDPOINT"]
-        self.access_key = config["OBJECT_STORAGE_ACCESS_KEY"]
-        self.secret_key = config["OBJECT_STORAGE_SECRET_KEY"]
-        self.secure = False  # Could also come from config if needed
+        self.endpoint = config.OBJECT_STORAGE_ENDPOINT
+        self.access_key = config.OBJECT_STORAGE_ACCESS_KEY
+        self.secret_key = config.OBJECT_STORAGE_SECRET_KEY
+        self.secure = config.OBJECT_STORAGE_SECURE
 
     @abstractmethod
     async def list_files(self, bucket_name: str):
