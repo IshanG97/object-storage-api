@@ -17,6 +17,8 @@ class StorageConfig:  # docker practically skips all the logic below since it lo
             self._load_minio_config()
         elif self.OBJECT_STORAGE_SERVICE == "nebius":
             self._load_nebius_config()
+        elif self.OBJECT_STORAGE_SERVICE == "aws":
+            self._load_aws_config()
         else:
             raise ValueError(
                 f"Unsupported storage service: {self.OBJECT_STORAGE_SERVICE}"
@@ -57,6 +59,20 @@ class StorageConfig:  # docker practically skips all the logic below since it lo
         self.OBJECT_STORAGE_REGION = os.getenv("OBJECT_STORAGE_REGION", "eu-west1")
         self.OBJECT_STORAGE_SECURE = (
             os.getenv("OBJECT_STORAGE_SECURE", "false").lower() == "true"
+        )
+
+    def _load_aws_config(self):
+        if os.path.exists(".env.aws"):
+            load_dotenv(".env.aws", override=True)
+        endpoint = os.getenv("OBJECT_STORAGE_ENDPOINT", "s3.amazonaws.com")
+        self.OBJECT_STORAGE_ENDPOINT = (
+            endpoint.replace("https://", "").replace("http://", "").replace(":443", "")
+        )
+        self.OBJECT_STORAGE_ACCESS_KEY = os.getenv("OBJECT_STORAGE_ACCESS_KEY")
+        self.OBJECT_STORAGE_SECRET_KEY = os.getenv("OBJECT_STORAGE_SECRET_KEY")
+        self.OBJECT_STORAGE_REGION = os.getenv("OBJECT_STORAGE_REGION", "us-east-1")
+        self.OBJECT_STORAGE_SECURE = (
+            os.getenv("OBJECT_STORAGE_SECURE", "true").lower() == "true"
         )
 
 

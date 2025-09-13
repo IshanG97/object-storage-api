@@ -1,4 +1,4 @@
-# minio_api.py
+# s3_api.py
 import io
 
 from fastapi import UploadFile
