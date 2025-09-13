@@ -103,8 +103,6 @@ curl -X GET "http://127.0.0.1:59090/download/my-bucket/file.jpg" \
 curl -X DELETE "http://127.0.0.1:59090/delete/my-bucket/file.jpg"
 ```
 
-**API Documentation:** http://127.0.0.1:59090/docs
-
 ## Security Notes
 
 - The service currently doesn't incorporate authentication or other security features
