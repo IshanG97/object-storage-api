@@ -28,7 +28,7 @@ async def health_check():
     }
 
 
-@app.post("/bucket/create/{bucket_name}")
+@app.post("/create/{bucket_name}")
 async def create_bucket(bucket_name: str):
     result = await storage_api.create_bucket(bucket_name)
     if "error" in result:
@@ -36,7 +36,7 @@ async def create_bucket(bucket_name: str):
     return result
 
 
-@app.post("/bucket/{bucket_name}/upload")
+@app.post("/upload/{bucket_name}")
 async def upload_file(bucket_name: str, file: UploadFile = File(...)):
     result = await storage_api.upload_file(bucket_name, file)
     if "error" in result:
@@ -44,7 +44,7 @@ async def upload_file(bucket_name: str, file: UploadFile = File(...)):
     return result
 
 
-@app.get("/bucket/{bucket_name}/files")
+@app.get("/list/{bucket_name}")
 async def list_files(bucket_name: str):
     result = await storage_api.list_files(bucket_name)
     if "error" in result:
@@ -52,7 +52,7 @@ async def list_files(bucket_name: str):
     return result
 
 
-@app.get("/bucket/{bucket_name}/download/{filename}")
+@app.get("/download/{bucket_name}/{filename}")
 async def download_file(bucket_name: str, filename: str):
     result = await storage_api.download_file(bucket_name, filename)
     if isinstance(result, dict) and "error" in result:
@@ -62,7 +62,7 @@ async def download_file(bucket_name: str, filename: str):
     return Response(content=result)
 
 
-@app.delete("/bucket/{bucket_name}/file/{filename}")
+@app.delete("/delete/{bucket_name}/{filename}")
 async def delete_file(bucket_name: str, filename: str):
     result = await storage_api.delete_file(bucket_name, filename)
     if "error" in result:

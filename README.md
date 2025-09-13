@@ -79,14 +79,28 @@ uvicorn service:app --host 127.0.0.1 --port 59090
 
 ## Testing the Service
 
-**API call:**
-```bash
-# Set the image path based on your setup
-FILE_PATH="data/{bucket_name}/{filename}"
+**Available API endpoints:**
 
-# Make the request
-curl -X GET "http://127.0.0.1:59090/process/${FILE_PATH}" \
-     -H "accept: application/json"
+```bash
+# Health check
+curl -X GET "http://127.0.0.1:59090/health"
+
+# Create bucket
+curl -X POST "http://127.0.0.1:59090/create/my-bucket"
+
+# Upload file
+curl -X POST "http://127.0.0.1:59090/upload/my-bucket" \
+     -F "file=@/path/to/your/file.jpg"
+
+# List files in bucket
+curl -X GET "http://127.0.0.1:59090/list/my-bucket"
+
+# Download file
+curl -X GET "http://127.0.0.1:59090/download/my-bucket/file.jpg" \
+     --output downloaded-file.jpg
+
+# Delete file
+curl -X DELETE "http://127.0.0.1:59090/delete/my-bucket/file.jpg"
 ```
 
 **API Documentation:** http://127.0.0.1:59090/docs
