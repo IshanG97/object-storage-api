@@ -6,4 +6,4 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"  # For accessing host from container
     env_file:
-      - .env.docker
+      - .env.minio.docker

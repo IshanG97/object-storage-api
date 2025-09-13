@@ -1,12 +1,10 @@
-.env
-.env.docker
-.env.kube
-.env.nebius
+.env*
+!env_examples/*.example
 .venv/
 __pycache__/
-.env*
 k8s/deployment.yaml
 k8s/service.yaml
 k8s/kompose.yaml
 k8s/secret.yaml
 test.py
+.DS_Store

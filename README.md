@@ -1,88 +1,98 @@
-# Object Storage REST API service
+# Object Storage REST API Service
 
-standalone FastAPI service for object storage
+FastAPI service for S3-compatible object storage with support for multiple backends and deployment methods.
 
+## Setup
 
-## 1. set up and run the MinIO object storage service
+This service uses a **two-tier environment configuration system**:
+1. **Main config (`.env`)** - sets `OBJECT_STORAGE_SERVICE` to choose backend (`minio`, `aws`, or `nebius`)
+2. **Backend-specific config** - credentials and endpoint configuration for the chosen backend
 
-create `.env.minio` file from template, then manually update environment variables
+### Step 1: setup your backend
 ```bash
-cp .env.minio.example .env.minio
+cp env_examples/.env.example .env
+# Edit OBJECT_STORAGE_SERVICE to: minio, aws, or nebius
 ```
 
-start [MinIO](https://github.com/minio/minio) object storage Docker container:
+### Step 2: configure your chosen backend
+
+**MinIO (local/self-hosted)** - best for local dev and testing
+```bash
+# For local development
+cp env_examples/.env.minio.local.example .env.minio
+
+# For Docker deployment
+cp env_examples/.env.minio.docker.example .env.minio
+```
+***Launch MinIO service***
 ```bash
 DATA_DIRECTORY=<local data directory path>
-
-docker run -p 9000:9000 -p 9001:9001 -v $DATA_DIRECTORY:/data --env-file .env.minio quay.io/minio/minio server /data --console-address ":9001"
+docker run -p 9000:9000 -p 9001:9001 \
+  -v $DATA_DIRECTORY:/data \
+  --env-file .env.minio \
+  quay.io/minio/minio server /data --console-address ":9001"
 ```
 
-
-## 2a. preferred method: run service in a Docker container
-
-create `.env.docker` file from template; update environment variable values if needed
+**AWS S3** - For production deployments
 ```bash
-cp .env.docker.example .env.docker
+cp env_examples/.env.aws.example .env.aws
+# Edit with your AWS credentials and region
 ```
 
-build the Docker image
+**Nebius Cloud Storage** - For production deployments
+```bash
+cp env_examples/.env.nebius.example .env.nebius
+# Edit with your Nebius credentials and region
+```
+
+## Deployment
+
+After completing the [Setup](#setup) steps above
+
+### 1. Docker (recommended)
+
 ```bash
 docker build -t object-storage-api .
-```
-
-run the Docker container service
-```bash
 docker compose up
 ```
 
+### 2. Local
 
-## 2b. alternative method: set up and run the service locally
-
-create `.env` file from template; update environment variable values if needed
+**Set up Python environment:**
 ```bash
-cp .env.example .env
-```
-
-set up a dedicated virtual environment to run the service
-```bash
-# (install uv)
+# Install uv if not already installed
 # curl -LsSf https://astral.sh/uv/install.sh | sh
-# https://docs.astral.sh/uv/getting-started/installation/
 
 uv python install 3.11
-
 uv sync
-```
-
-install `pre-commit` git hook scripts
-```bash
 uv run pre-commit install
 ```
 
-start the service
+**Start the service:**
 ```bash
-# development
+# Development mode with auto-reload
 fastapi dev --host 127.0.0.1 --port 59090 service.py
 
-# production
+# Production mode
 uvicorn service:app --host 127.0.0.1 --port 59090
 ```
 
+## Testing the Service
 
-## 3. test the service
-
-manually request classification for an image
+**API call:**
 ```bash
-# e.g. local
-IMAGE_PATH="data/{bucket_name}/{image_filename}"
-# e.g. docker
-IMAGE_PATH="local/{image_filename}"
+# Set the image path based on your setup
+FILE_PATH="data/{bucket_name}/{filename}"
 
-# curl command once IMAGE_PATH has been set
-curl -X GET "http://127.0.0.1:59090/process/${IMAGE_PATH}" -H "accept: application/json"
+# Make the request
+curl -X GET "http://127.0.0.1:59090/process/${FILE_PATH}" \
+     -H "accept: application/json"
 ```
 
-service documentation:
-http://127.0.0.1:59090/docs
+**API Documentation:** http://127.0.0.1:59090/docs
 
-NOTE: The service is designed to run locally and currently doesn't incorporate authentication or other security features.
+## Security Notes
+
+- The service currently doesn't incorporate authentication or other security features
+- Ensure proper firewall and network security when deploying to production
+- Store credentials securely and never commit them to version control
