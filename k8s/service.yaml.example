@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: object-storage-api
 spec:
-  type: LoadBalancer
+  type: ClusterIP # LoadBalancer is only if we need external comms
   ports:
     - port: 59090
       targetPort: 59090
